@@ -43,6 +43,7 @@ COPY api/ ./api/
 COPY services/ ./services/
 COPY models/ ./models/
 COPY main.py ./
+COPY config.json ./
 COPY start.sh /app
 RUN chmod +x /app/start.sh
 

@@ -5,7 +5,7 @@
 **Do before building image:**
 
 - Edit `config.json` to change:
-  - `model_path`: put model's file inside `models/language_model/<model_name>`.
+  - `model_path`: put model's file inside `models/<model_name>`.
   - `cuda_graph_mode`: can be `full_and_piecewise`, `full_decode_only`, `full` or `piecewise`, `full_and_piecewise` should give best performance but uses lots of memory, set `cuda_graph_capture_sizes` to keep memory ultilization under control.
   - `cuda_graph_capture_sizes`: list of cuda graph sizes to be compiled on first start up if not in `eager mode`, vLLM uses graphs to speed up token processing, graphs are used dynamically wherever they fit, a graph is fixed size, when used speed up processing for the exact amount of tokens as it's size, graphs consumes GPU memory.
 
