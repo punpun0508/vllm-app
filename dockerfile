@@ -15,6 +15,10 @@ ENV CC=/usr/bin/gcc CXX=/usr/bin/g++ \
     VLLM_WORKER_MULTIPROC_METHOD=spawn \
     # VLLM_ATTENTION_BACKEND=FLASHINFER \
     VLLM_EAGER=0 \
+    GPU_MEM_UTILIZATION=0.9 \
+    MAX_TOKENS=4096 \
+    MAX_CONCURRENT_REQUESTS=128 \
+    MAX_CONCURRENT_TOKENS=4096 \
     PORT=8080 \
     PORT_HEALTH=8081
 
@@ -53,4 +57,4 @@ EXPOSE 8080 8081
 
 # Start your FastAPI app (change module:app if different)
 ENTRYPOINT ["/app/start.sh"]
-CMD ["uv", "run", "gunicorn", "-w", "1", "-k", "uvicorn_worker.UvicornWorker", "--preload", "-b", "0.0.0.0:8080", "-b", "0.0.0.0:8081", "main:app"]
+CMD ["uv", "run", "gunicorn", "-w", "1", "-k", "uvicorn_worker.UvicornWorker", "--preload", "-b", "0.0.0.0:8080", "-b", "0.0.0.0:8081", "--access-logfile", "-", "--error-logfile", "-", "--capture-output", "--log-level", "info", "main:app"]

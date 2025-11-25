@@ -18,14 +18,18 @@ os.environ.setdefault("TRITON_CACHE_DIR", "/runpod-volume/triton_cache")
 os.environ.setdefault("VLLM_CACHE_DIR", "/runpod-volume/vllm_cache")
 os.environ.setdefault("VLLM_WORKER_MULTIPROC_METHOD", "spawn")
 os.environ.setdefault("VLLM_EAGER", "0")
+os.environ.setdefault("GPU_MEM_UTILIZATION", "0.9")
+os.environ.setdefault("MAX_TOKENS", "4096")
+os.environ.setdefault("MAX_CONCURRENT_REQUESTS", "128")
+os.environ.setdefault("MAX_CONCURRENT_TOKENS", "4096")
 # os.environ.setdefault("VLLM_ATTENTION_BACKEND", "FLASHINFER")
 
 
 class vLLMService:
-    _async_llm_engine: AsyncLLM | None = None
+    _async_llm_engine: AsyncLLM
     _use_eager: bool = os.getenv("VLLM_EAGER", "0") == "1"
-    _compilation_config: CompilationConfig | None = None
-    _args: AsyncEngineArgs | None = None
+    _compilation_config: CompilationConfig
+    _args: AsyncEngineArgs
     _engine_ready: bool = False
 
     @classmethod
@@ -42,10 +46,18 @@ class vLLMService:
                 tokenizer="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
                 quantization='compressed-tensors',
                 dtype="bfloat16",
-                max_model_len=4096,
-                gpu_memory_utilization=0.9,
-                max_num_seqs=128,
-                max_num_batched_tokens=4096,
+                max_model_len=int(
+                    os.getenv("MAX_TOKENS", "4096")
+                ),
+                gpu_memory_utilization=float(
+                    os.getenv("GPU_MEM_UTILIZATION", "0.9")
+                ),
+                max_num_seqs=int(
+                    os.getenv("MAX_CONCURRENT_REQUESTS", "128")
+                ),
+                max_num_batched_tokens=int(
+                    os.getenv("MAX_CONCURRENT_TOKENS", "4096")
+                ),
                 enable_chunked_prefill=True,
                 enable_prefix_caching=True,
                 swap_space=4,
@@ -58,10 +70,18 @@ class vLLMService:
                 tokenizer="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
                 quantization='compressed-tensors',
                 dtype="bfloat16",
-                max_model_len=4096,
-                gpu_memory_utilization=0.9,
-                max_num_seqs=128,
-                max_num_batched_tokens=4096,
+                max_model_len=int(
+                    os.getenv("MAX_TOKENS", "4096")
+                ),
+                gpu_memory_utilization=float(
+                    os.getenv("GPU_MEM_UTILIZATION", "0.9")
+                ),
+                max_num_seqs=int(
+                    os.getenv("MAX_CONCURRENT_REQUESTS", "128")
+                ),
+                max_num_batched_tokens=int(
+                    os.getenv("MAX_CONCURRENT_TOKENS", "4096")
+                ),
                 enable_chunked_prefill=True,
                 enable_prefix_caching=True,
                 swap_space=4,
@@ -86,8 +106,8 @@ Xin chào!
 <|im_start|>assistant
 """,
             sampling_params=SamplingParams(
-                max_tokens=3,
-                temperature=0.0
+                max_tokens=4,
+                temperature=0.1
             ),
             request_id=str(uuid4())
         ):
@@ -156,7 +176,7 @@ Xin chào!
                 print("Attempting to reinitialize the LLM engine...")
                 cls._engine_ready = False
                 cls._async_llm_engine.shutdown()
-                cls._async_llm_engine = None
+                # cls._async_llm_engine = None
                 try:
                     if dist.is_available() and dist.is_initialized():
                         dist.destroy_process_group()
