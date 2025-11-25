@@ -31,6 +31,18 @@ class vLLMService:
     _compilation_config: CompilationConfig
     _args: AsyncEngineArgs
     _engine_ready: bool = False
+    _cuda_graph_mode: dict = {
+        "piecewise": CUDAGraphMode.PIECEWISE,
+        "full": CUDAGraphMode.FULL,
+        "full_decode_only": CUDAGraphMode.FULL_DECODE_ONLY,
+        "full_and_piecewise": CUDAGraphMode.FULL_AND_PIECEWISE
+    }
+    _config: dict = json.loads(
+        open(
+            file="./config.json",
+            mode="r"
+        ).read()
+    )
 
     @classmethod
     async def init_resource(cls) -> AsyncLLM:
@@ -38,14 +50,16 @@ class vLLMService:
             cls._compilation_config = CompilationConfig(
                 level=3,
                 cache_dir="/runpod-volume/vllm_cache",
-                cudagraph_mode=CUDAGraphMode.PIECEWISE,
-                cudagraph_capture_sizes=[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+                cudagraph_mode=cls._cuda_graph_mode[
+                    cls._config["cuda_graph_mode"]
+                ],
+                cudagraph_capture_sizes=cls._config["cuda_graph_capture_sizes"]
             )
             cls._args = AsyncEngineArgs(
-                model="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
-                tokenizer="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
-                quantization='compressed-tensors',
-                dtype="bfloat16",
+                model=cls._config["model_path"],
+                tokenizer=cls._config["model_path"],
+                # quantization='compressed-tensors',
+                # dtype="bfloat16",
                 max_model_len=int(
                     os.getenv("MAX_TOKENS", "4096")
                 ),
@@ -66,10 +80,10 @@ class vLLMService:
             )
         else:
             cls._args = AsyncEngineArgs(
-                model="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
-                tokenizer="./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
-                quantization='compressed-tensors',
-                dtype="bfloat16",
+                model=cls._config["model_path"],
+                tokenizer=cls._config["model_path"],
+                # quantization='compressed-tensors',
+                # dtype="bfloat16",
                 max_model_len=int(
                     os.getenv("MAX_TOKENS", "4096")
                 ),
