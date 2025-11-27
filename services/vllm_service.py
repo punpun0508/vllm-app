@@ -121,7 +121,7 @@ class vLLMService:
         cls,
         prompt: str
     ) -> AsyncGenerator[str, None]:
-        num_tokens: int = 0 + cls._config["skip_first_token"]
+        num_tokens: int = 0 + cls._config["keep_first_token"]
         tokens: list[str] = ["", ""]
         try:
             assert cls._engine_ready, "LLM Engine is not ready."

@@ -10,7 +10,7 @@
   - `model_path`: put model's file inside `models/<model_name>`.
   - `cuda_graph_mode`: can be `full_and_piecewise`, `full_decode_only`, `full` or `piecewise`, `full_and_piecewise` should give best performance but uses lots of memory, set `cuda_graph_capture_sizes` to keep memory ultilization under control, `piecewise` should use the least amount of memory.
   - `cuda_graph_capture_sizes`: list of cuda graph sizes to be compiled on first start up if not in `eager mode`, vLLM uses graphs to speed up processing, graphs are used dynamically wherever they fit, a graph is fixed size, when used speed up processing for the exact amount of tokens as it's size, graphs consumes GPU memory.
-  - `skip_first_token`: whether or not to skip the first generated token.
+  - `keep_first_token`: whether or not to keep the first generated token.
   - `max_tokens`: the maximum allowed length of an answer.
   - `temperature`: **0.0** to **1.0**, the "creativity" slider, higher makes the LLM generate more random responses.
   - `top_p`: **0.0** to **1.0**, the maximum total probability of top tokens to consider final phase of generation, use like a budget, higher means more tokens can be squeezed in to the `"top tokens to be randomly picked"` list.
