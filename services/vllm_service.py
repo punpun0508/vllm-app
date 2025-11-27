@@ -107,16 +107,15 @@ class vLLMService:
         async for _ in cls._async_llm_engine.generate(
             prompt="""\
 <|im_start|>system
-Bạn là một trợ lí Tiếng Việt nhiệt tình và trung thực. \
-Hãy luôn trả lời một cách hữu ích nhất có thể.<|im_end|>
+You are a helpful assistant.<|im_end|>
 <|im_start|>user
-Chú ý các yêu cầu sau:
-- Hãy trả lời bằng tiếng Việt.
+Keep in mind the following instructions when answering:
+- Keep your answer short and concise.
 
-### Cấu hỏi :
-Xin chào!
+### Question :
+Hello!
 
-### Trả lời :<|im_end|>
+### Answer :<|im_end|>
 <|im_start|>assistant
 """,
             sampling_params=SamplingParams(
