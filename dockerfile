@@ -20,7 +20,8 @@ ENV CC=/usr/bin/gcc CXX=/usr/bin/g++ \
     MAX_CONCURRENT_REQUESTS=128 \
     MAX_CONCURRENT_TOKENS=4096 \
     PORT=8080 \
-    PORT_HEALTH=8081
+    PORT_HEALTH=8081 \
+    UV_LINK_MODE=copy
 
 # --- Install uv (package manager) — official guidance copies the uv binary
 # Pin a uv version; update as you like.
@@ -43,6 +44,7 @@ COPY api/ ./api/
 COPY services/ ./services/
 COPY models/ ./models/
 COPY main.py ./
+COPY init_prompt.txt ./
 COPY config.json ./
 COPY start.sh /app
 RUN chmod +x /app/start.sh

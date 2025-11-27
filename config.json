@@ -1,5 +1,11 @@
 {
     "model_path": "./models/language_model/GRPO-Vi-Qwen2-7B-RAG-W4A16",
     "cuda_graph_mode": "piecewise",
-    "cuda_graph_capture_sizes": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+    "cuda_graph_capture_sizes": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+    "skip_first_token": true,
+    "max_tokens": 2048,
+    "temperature": 0.5,
+    "top_p": 0.85,
+    "top_k": 25,
+    "repetition_penalty": 1.1
 }

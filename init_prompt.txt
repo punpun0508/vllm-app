@@ -1,0 +1,11 @@
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+Keep in mind the following instructions when answering:
+- Keep your answer short and concise.
+
+### Question :
+Hello!
+
+### Answer :<|im_end|>
+<|im_start|>assistant

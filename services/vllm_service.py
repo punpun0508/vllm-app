@@ -105,22 +105,10 @@ class vLLMService:
             engine_args=cls._args
         )
         async for _ in cls._async_llm_engine.generate(
-            prompt="""\
-<|im_start|>system
-You are a helpful assistant.<|im_end|>
-<|im_start|>user
-Keep in mind the following instructions when answering:
-- Keep your answer short and concise.
-
-### Question :
-Hello!
-
-### Answer :<|im_end|>
-<|im_start|>assistant
-""",
+            prompt=open(file="./init_prompt.txt", mode="r").read(),
             sampling_params=SamplingParams(
-                max_tokens=4,
-                temperature=0.1
+                max_tokens=2,
+                temperature=0.0
             ),
             request_id=str(uuid4())
         ):
@@ -133,8 +121,8 @@ Hello!
         cls,
         prompt: str
     ) -> AsyncGenerator[str, None]:
-        num_tokens: int = 0
-        tokens: list[str] = ["",]
+        num_tokens: int = 0 + cls._config["skip_first_token"]
+        tokens: list[str] = ["", ""]
         try:
             assert cls._engine_ready, "LLM Engine is not ready."
             answer_generator = cls._async_llm_engine.generate(
@@ -142,11 +130,11 @@ Hello!
                 sampling_params=SamplingParams(
                     # n=1,
                     # best_of=1,
-                    max_tokens=2048,
-                    temperature=0.5,
-                    top_p=0.85,
-                    top_k=25,
-                    repetition_penalty=1.1,
+                    max_tokens=cls._config["max_tokens"],
+                    temperature=cls._config["temperature"],
+                    top_p=cls._config["top_p"],
+                    top_k=cls._config["top_k"],
+                    repetition_penalty=cls._config["repetition_penalty"],
                     output_kind=RequestOutputKind.DELTA
                     # stop=["<|im_end|>"]
                 ),
@@ -156,7 +144,7 @@ Hello!
                 completion_output: CompletionOutput = request_output.outputs[0]
                 generated_text: str = completion_output.text
                 if generated_text:
-                    tokens.append(generated_text)
+                    tokens[-1] = generated_text
                     num_tokens += 1
                     text = tokens[(-1 * (num_tokens > 1))]
                     answer_part = {
